@@ -17,4 +17,6 @@ class ConvexHull
         bool static compareYCoors(Point p1, Point p2);
         void sortPointSet();
         bool turnsRight(Point start, Point middle, Point end);
+        std::vector<Point> findUpperHull();
+        std::vector<Point> findLowerHull();
 };

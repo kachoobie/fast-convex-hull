@@ -27,27 +27,7 @@ void ConvexHull::generateConvexHull()
 
     this->sortPointSet();
 
-    std::vector<Point> upperHull;
-    upperHull.push_back(this->pointSet.at(0));
-    upperHull.push_back(this->pointSet.at(1));
-
-    for (int i = 2; i < this->pointSet.size(); ++i) {
-        Point end = this->pointSet.at(i);
-        while (upperHull.size() > 1) {
-            Point start = upperHull.at(upperHull.size() - 2);
-            Point middle = upperHull.at(upperHull.size() - 1);
-
-            if (this->turnsRight(start, middle, end)) {
-                upperHull.push_back(end);
-                break;
-            } else {
-                upperHull.pop_back();
-            }
-        }
-        if (upperHull.size() == 1) {
-            upperHull.push_back(end);
-        }
-    }
+    std::vector<Point> upperHull = this->findUpperHull();
 
     this->convexHull = upperHull;
 }
@@ -73,4 +53,37 @@ bool ConvexHull::turnsRight(Point start, Point middle, Point end)
     float crossProduct = (middle.x - start.x)*(end.y - start.y) - (middle.y - start.y)*(end.x - start.x);
     float epsilon = -1e-9;
     return crossProduct < epsilon;
+}
+
+std::vector<Point> ConvexHull::findUpperHull()
+{
+    std::vector<Point> upperHull;
+    upperHull.push_back(this->pointSet.at(0));
+    upperHull.push_back(this->pointSet.at(1));
+
+    for (int i = 2; i < this->pointSet.size(); ++i) {
+        Point end = this->pointSet.at(i);
+        while (upperHull.size() > 1) {
+            Point start = upperHull.at(upperHull.size() - 2);
+            Point middle = upperHull.at(upperHull.size() - 1);
+
+            if (this->turnsRight(start, middle, end)) {
+                upperHull.push_back(end);
+                break;
+            } else {
+                upperHull.pop_back();
+            }
+        }
+        if (upperHull.size() == 1) {
+            upperHull.push_back(end);
+        }
+    }
+
+    return upperHull;
+}
+
+std::vector<Point> ConvexHull::findLowerHull()
+{
+    std::vector<Point> lowerHull;
+    return lowerHull;
 }
