@@ -1,0 +1,76 @@
+#include "../include/convexhull.h"
+#include <iostream>
+
+ConvexHull::ConvexHull()
+{
+}
+
+void ConvexHull::addPoint(float x, float y)
+{
+    Point newPoint(x, y);
+    this->pointSet.push_back(newPoint);
+}
+
+void ConvexHull::dump()
+{
+    this->pointSet.clear();
+    this->convexHull.clear();
+}
+
+void ConvexHull::generateConvexHull()
+{
+    if (this->pointSet.size() < 3)
+    {
+        this->convexHull = this->pointSet;
+        return;
+    }
+
+    this->sortPointSet();
+
+    std::vector<Point> upperHull;
+    upperHull.push_back(this->pointSet.at(0));
+    upperHull.push_back(this->pointSet.at(1));
+
+    for (int i = 2; i < this->pointSet.size(); ++i) {
+        Point end = this->pointSet.at(i);
+        while (upperHull.size() > 1) {
+            Point start = upperHull.at(upperHull.size() - 2);
+            Point middle = upperHull.at(upperHull.size() - 1);
+
+            if (this->turnsRight(start, middle, end)) {
+                upperHull.push_back(end);
+                break;
+            } else {
+                upperHull.pop_back();
+            }
+        }
+        if (upperHull.size() == 1) {
+            upperHull.push_back(end);
+        }
+    }
+
+    this->convexHull = upperHull;
+}
+
+bool ConvexHull::compareXCoors(Point p1, Point p2)
+{
+    return p1.x < p2.x;
+}
+
+bool ConvexHull::compareYCoors(Point p1, Point p2)
+{
+    return p1.y < p2.y;
+}
+
+void ConvexHull::sortPointSet()
+{
+    std::stable_sort(this->pointSet.begin(), this->pointSet.end(), this->compareYCoors);
+    std::stable_sort(this->pointSet.begin(), this->pointSet.end(), this->compareXCoors);
+}
+
+bool ConvexHull::turnsRight(Point start, Point middle, Point end)
+{
+    float crossProduct = (middle.x - start.x)*(end.y - start.y) - (middle.y - start.y)*(end.x - start.x);
+    float epsilon = -1e-9;
+    return crossProduct < epsilon;
+}
