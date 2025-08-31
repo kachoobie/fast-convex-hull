@@ -28,8 +28,13 @@ void ConvexHull::generateConvexHull()
     this->sortPointSet();
 
     std::vector<Point> upperHull = this->findUpperHull();
+    std::vector<Point> lowerHull = this->findLowerHull();
 
     this->convexHull = upperHull;
+
+    for (int i = 1; i < lowerHull.size() - 1; ++i) {
+        this->convexHull.push_back(lowerHull.at(i));
+    }
 }
 
 bool ConvexHull::compareXCoors(Point p1, Point p2)
@@ -85,5 +90,27 @@ std::vector<Point> ConvexHull::findUpperHull()
 std::vector<Point> ConvexHull::findLowerHull()
 {
     std::vector<Point> lowerHull;
+    int lastIndex = this->pointSet.size() - 1;
+    lowerHull.push_back(this->pointSet.at(lastIndex));
+    lowerHull.push_back(this->pointSet.at(lastIndex - 1));
+
+    for (int i = lastIndex - 2; i >= 0; --i) {
+        Point end = this->pointSet.at(i);
+        while (lowerHull.size() > 1) {
+            Point start = lowerHull.at(lowerHull.size() - 2);
+            Point middle = lowerHull.at(lowerHull.size() - 1);
+
+            if (this->turnsRight(start, middle, end)) {
+                lowerHull.push_back(end);
+                break;
+            } else {
+                lowerHull.pop_back();
+            }
+        }
+        if (lowerHull.size() == 1) {
+            lowerHull.push_back(end);
+        }
+    }
+
     return lowerHull;
 }
