@@ -47,7 +47,11 @@ SDL_AppResult SDLDriver::drive()
                     ch.dump();
                 } else if (event.key.scancode == SDL_SCANCODE_RETURN) {
                     std::cout << "Finding convex hull..." << std::endl;
+                    auto startTime = std::chrono::high_resolution_clock::now();
                     ch.generateConvexHull();
+                    auto endTime = std::chrono::high_resolution_clock::now();
+                    const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
+                    std::cout << "Convex hull generated in " << duration << std::endl;
                 } else if (event.key.scancode == SDL_SCANCODE_T) {
                     for (int i = 0; i < 1000; ++i) {
                         std::random_device rd;
